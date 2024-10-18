@@ -17,10 +17,6 @@ const (
 	// DefaultDeadline provides default deadline to tcp read/write operations.
 	DefaultDeadline = 5 * time.Second
 
-	// MaxCommandLen is an artificial restriction, but it will help in case of random
-	// large queries.
-	MaxCommandLen = 1000
-
 	// SERVERDATA_AUTH is the first packet sent by the client,
 	// which is used to authenticate the conn with the server.
 	SERVERDATA_AUTH int32 = 3
@@ -131,10 +127,6 @@ func Dial(address string, password string, options ...Option) (*Conn, error) {
 func (c *Conn) Execute(command string) (string, error) {
 	if command == "" {
 		return "", ErrCommandEmpty
-	}
-
-	if len(command) > MaxCommandLen {
-		return "", ErrCommandTooLong
 	}
 
 	if err := c.write(SERVERDATA_EXECCOMMAND, SERVERDATA_EXECCOMMAND_ID, command); err != nil {
